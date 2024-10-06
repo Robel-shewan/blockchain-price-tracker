@@ -1,4 +1,4 @@
-import { Controller, Get, Param } from '@nestjs/common';
+import { Controller, Get, NotFoundException, Param } from '@nestjs/common';
 import { PriceService } from './price.service';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -24,6 +24,11 @@ export class PriceController {
       .andWhere('price.timestamp > :twentyFourHoursAgo', { twentyFourHoursAgo })
       .orderBy('price.timestamp', 'DESC')
       .getMany();
+
+    // Check if any prices were found
+    if (prices.length === 0) {
+      throw new NotFoundException(`No prices found for chain: ${chain}`);
+    }
 
     // Step 2: Group by hour and take the latest price for each hour
     const hourlyPrices = [];
