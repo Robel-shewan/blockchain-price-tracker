@@ -1,0 +1,48 @@
+version: '3'
+services:
+  # Database service
+  postgres:
+    image: postgres:14
+    container_name: blockchain-db
+    environment:
+      POSTGRES_USER: ${DATABASE_USERNAME}
+      POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
+      POSTGRES_DB: ${DATABASE_NAME}
+    ports:
+      - '5432:5432'
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    networks:
+      - blockchain-network
+
+  # Application service
+  app:
+    build: .
+    container_name: blockchain-app
+    ports:
+      - '3000:3000'
+    environment:
+      DATABASE_HOST: postgres
+      DATABASE_PORT: 5432
+      DATABASE_NAME: ${DATABASE_NAME}
+      DATABASE_USERNAME: ${DATABASE_USERNAME}
+      DATABASE_PASSWORD: ${DATABASE_PASSWORD}
+      EMAIL_USER: ${EMAIL_USER}
+      EMAIL_PASSWORD: ${EMAIL_PASSWORD}
+      PERCENTAGE_EMAIL_SEND_TO: ${PERCENTAGE_EMAIL_SEND_TO}
+      MORALIS_API_KEY: ${MORALIS_API_KEY}
+      MATIC_ERC20_ETHEREUM: ${MATIC_ERC20_ETHEREUM}
+      MATIC_NATIVE_POLYGON: ${MATIC_NATIVE_POLYGON}
+      ETHEREUM_CHAIN_ID: ${ETHEREUM_CHAIN_ID}
+      POLYGON_CHAIN_ID: ${POLYGON_CHAIN_ID}
+    depends_on:
+      - postgres
+    networks:
+      - blockchain-network
+
+networks:
+  blockchain-network:
+    driver: bridge
+
+volumes:
+  pgdata:
