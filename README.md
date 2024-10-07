@@ -1,86 +1,225 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# Blockchain Price Tracker
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+A NestJS-based application that monitors the prices of Ethereum and Polygon, sends email alerts on significant price changes, and provides APIs for retrieving price data and setting custom alerts.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+## Table of Contents
 
-## Description
+- [Features](#features)
+- [Technical Stack](#technical-stack)
+- [Setup](#setup)
+  - [Prerequisites](#prerequisites)
+  - [Installation](#installation)
+  - [Environment Variables](#environment-variables)
+- [Usage](#usage)
+  - [API Endpoints](#api-endpoints)
+    - [Get Hourly Prices](#get-hourly-prices)
+    - [Set Price Alert](#set-price-alert)
+- [Important Notes](#important-notes)
+- [Troubleshooting](#troubleshooting)
+- [License](#license)
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+## Features
 
-## Project setup
+1. **Automated Price Tracking**
 
-```bash
-$ npm install
+   - Automatically saves the price of Ethereum and Polygon every 5 minutes.
+
+2. **Email Notifications**
+
+   - Sends an email to `hyperhire_assignment@hyperhire.in` if the price of a chain increases by more than 3% compared to its price one hour ago.
+
+3. **Price Data API**
+
+   - Provides an API to return prices for each hour within the last 24 hours.
+   - **Parameters:**
+     - `chain`: `"ethereum"` or `"polygon"`
+   - **Description:**
+     - Retrieves the latest prices for specific hours, allowing you to view price changes throughout the last 24 hours.
+
+4. **Custom Price Alerts**
+   - Allows users to set alerts for specific prices via an API.
+   - **Example Request:**
+     ```json
+     {
+       "email": "your_email@example.com",
+       "chain": "ethereum",
+       "targetPrice": "1000"
+     }
+     ```
+   - **Note:**
+     - Use `"chain": "ethereum"` or `"chain": "polygon"` when querying or creating alerts.
+
+## Technical Stack
+
+- **Framework:** NestJS
+- **Database:** PostgreSQL with TypeORM
+- **API:** Moralis for retrieving token prices
+- **Containerization:** Docker and Docker Compose
+
+## Setup
+
+### Prerequisites
+
+- [Node.js](https://nodejs.org/) (v14 or later)
+- [Docker](https://www.docker.com/) & [Docker Compose](https://docs.docker.com/compose/)
+- [PostgreSQL](https://www.postgresql.org/) database
+- Moralis API Key
+
+### Installation
+
+1. **Clone the Repository**
+
+   ```bash
+   git clone https://github.com/Robel-shewan/blockchain-price-tracker.git
+   cd blockchain-price-tracker
+
+   ```
+
+2. **Create Environment Variables**
+
+   - Duplicate the `.env-example` file and rename it to `.env`.
+   - Fill in the necessary environment variables as described below.
+
+3. **Docker Setup**
+   - Ensure Docker and Docker Compose are installed.
+   - Build and run the containers:
+     ```bash
+     docker-compose up --build
+     ```
+
+## Environment Variables
+
+Ensure your `.env` file includes the following variables:
+
+```env
+# Moralis API
+MORALIS_API_KEY=your_moralis_api_key
+
+# Token Addresses
+MATIC_ERC20_ETHEREUM=0x7d1afa7b718fb893db30a3abc0cfc608aacfebb0
+
+# Chain IDs (Hexadecimal)
+ETHEREUM_CHAIN_ID=0x1
+POLYGON_CHAIN_ID=0x89
+
+# Email Configuration
+EMAIL_HOST=your_email_host
+EMAIL_PORT=your_email_port
+EMAIL_USER=your_email_username
+EMAIL_PASS=your_email_password
+PERCENTAGE_EMAIL_SEND_TO=hyperhire_assignment@hyperhire.in
+
+# Database Configuration
+DB_HOST=your_db_host
+DB_PORT=your_db_port
+DB_USERNAME=your_db_username
+DB_PASSWORD=your_db_password
+DB_NAME=your_db_name
 ```
 
-## Compile and run the project
+**Note:**
 
-```bash
-# development
-$ npm run start
+- Replace placeholders like `your_moralis_api_key`, `your_email_host`, etc., with your actual credentials.
+- Ensure that `MATIC_ERC20_ETHEREUM` has a valid token address with liquidity pools.
 
-# watch mode
-$ npm run start:dev
+## Usage
 
-# production mode
-$ npm run start:prod
+### API Endpoints
+
+#### Get Hourly Prices
+
+- **Endpoint:** `/api/prices`
+- **Method:** `GET`
+- **Parameters:**
+  - `chain` (required): `"ethereum"` or `"polygon"`
+- **Description:** Retrieves the latest prices for each hour within the last 24 hours.
+
+- **Example Request:**
+  ```bash
+  GET /api/prices?chain=ethereum
+  ```
+
+### Swagger API Documentation
+
+To access the automatically generated Swagger API documentation:
+
+1. Run the application.
+2. Open your browser and navigate to `http://localhost:3000/api`.
+
+You will find interactive API documentation where you can test all available endpoints directly from the browser.
+
+## Important Notes
+
+- **Moralis API Key:** Use your own Moralis API key and add your Ethereum and Polygon token addresses.
+- **Token Address Validation:**
+
+  - Ensure the token address is correct and has liquidity pools.
+  - **Example:**
+    ```env
+    MATIC_ERC20_ETHEREUM=0x7d1afa7b718fb893db30a3abc0cfc608aacfebb0
+    ```
+  - **Error Handling:** If you encounter `Not Found (404): No liquidity pools found for the specified token address`, verify the token address.
+
+- **Chain IDs:**
+  - Use the following hexadecimal chain IDs in Moralis:
+    ```env
+    ETHEREUM_CHAIN_ID=0x1
+    POLYGON_CHAIN_ID=0x89
+    ```
+- **API Rate Limiting:**
+  - Avoid making requests to the Moralis API too frequently (less than a few minutes apart) to prevent being blocked.
+
+## Email Notifications
+
+The application sends email notifications when certain conditions are met, such as a price alert or a percentage price increase of more than 3%.
+
+The `isTrigger` flag prevents duplicate emails for the same alert.
+
+### Example Email Notifications:
+
+Here are two example screenshots of the email notifications:
+
+![Email Notification 1](./email1.png)
+_Email showing price alert notification._
+
+![Email Notification 2](./email2.png)
+_Email showing percentage price increase notification._
+
+You can test the percentage increase alerts by simulating price increases. The environment variable `PERCENTAGE_EMAIL_SEND_TO` is set to `hyperhire_assignment@hyperhire.in` for percentage alert notifications.
+
+- **Data Availability:**
+  - If you receive the message `No price found for ${chain} from 1 hour ago`, it may be due to insufficient data.
+  - To resolve this for testing purposes, you can:
+  -     it for 1 hour to gather sufficient data.
+        Seed some data from the previous hour.
+        Temporarily comment out the check in the function that compares prices from one hour ago, as the requirement states it compares prices from one hour prior.
+        This ensures the correct comparison logic for price changes over time but allows flexibility for testing scenarios.
+    - **Solutions:**
+      - Seed the data first.
+      - Temporarily comment out the relevant check for immediate testing.
+
+## Troubleshooting
+
+- **No Liquidity Pools Found (404 Error):**
+  - Ensure the token address is correct and has active liquidity pools.
+- **Email Not Sending:**
+
+  - Verify email configuration in the `.env` file.
+  - Check spam or junk folders.
+
+- **API Not Responding:**
+
+  - Ensure Docker containers are running.
+  - Check logs for any errors:
+    ```bash
+    docker-compose logs
+    ```
+
+- **Database Connection Issues:**
+  - Verify database credentials and that the PostgreSQL service is running.
+
+Let me know if you need more information, and if you encounter any issues while testing the application, please feel free to reach out.
+
 ```
 
-## Run tests
-
-```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
 ```
-
-## Resources
-
-Check out a few resources that may come in handy when working with NestJS:
-
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
-
-## Support
-
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
-## License
-
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
-# blockchain-price-tracker
