@@ -16,7 +16,6 @@ A NestJS-based application that monitors the prices of Ethereum and Polygon, sen
     - [Set Price Alert](#set-price-alert)
 - [Important Notes](#important-notes)
 - [Troubleshooting](#troubleshooting)
-- [License](#license)
 
 ## Features
 
